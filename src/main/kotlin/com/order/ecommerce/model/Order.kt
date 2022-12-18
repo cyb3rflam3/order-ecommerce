@@ -1,5 +1,9 @@
 package com.order.ecommerce.model
 
+import com.order.ecommerce.dto.OrderDto
+import com.order.ecommerce.model.Address.Companion.toAddressDto
+import com.order.ecommerce.model.OrderItem.Companion.toOrderItemDto
+import com.order.ecommerce.util.Converters
 import lombok.Data
 import java.io.Serializable
 import java.time.LocalDateTime
@@ -56,4 +60,23 @@ class Order(
     @OneToMany(targetEntity = OrderItem::class, fetch = FetchType.LAZY, mappedBy = "order")
     open var orderItems: MutableList<OrderItem>?
 
-) : Serializable
+) : Serializable {
+    companion object {
+        fun Order.toOrderDto() : OrderDto {
+            return OrderDto(
+                customerId = customerId,
+                orderItems = orderItems?.toOrderItemDto() ?: emptyList(),
+                shippingCharges = shippingCharges,
+                subTotal = subTotal,
+                totalAmt = totalAmt,
+                tax = tax,
+                title = title,
+                shippingMode = Converters.getEnumOf(shippingMode),
+                amount = payment.getAmount(),
+                paymentMode = Converters.getEnumOf(payment.getPaymentMode()),
+                billingAddress = billingAddress.toAddressDto(),
+                shippingAddress = shippingAddress.toAddressDto(),
+            )
+        }
+    }
+}

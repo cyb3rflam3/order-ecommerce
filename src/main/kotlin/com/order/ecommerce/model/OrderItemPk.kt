@@ -17,4 +17,5 @@ class OrderItemPk(
     companion object {
         private const val serialVersionUID = 5074947294298476737L
     }
+    fun getProductId(): String = productId
 }

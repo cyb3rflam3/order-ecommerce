@@ -5,6 +5,7 @@ import com.order.ecommerce.dto.OrderDto
 import com.order.ecommerce.enum.OrderStatus
 import com.order.ecommerce.mapper.OrderDetailsMapper
 import com.order.ecommerce.model.Order
+import com.order.ecommerce.model.Order.Companion.toOrderDto
 import com.order.ecommerce.model.OrderItem
 import com.order.ecommerce.repository.OrderItemRepository
 import com.order.ecommerce.repository.OrderRepository
@@ -32,9 +33,9 @@ class OrderService(
         orderRepository.save(order)
     }
 
-    fun findOrderById(orderId: String): Order {
-        //Always return a dto - Need to map entity to dto to get all fields
-        return orderRepository.findById(orderId).orElseThrow()
+    fun findOrderById(orderId: String): OrderDto {
+        val order = orderRepository.findById(orderId).orElseThrow()
+        return order.toOrderDto()
     }
 
     @Transactional
@@ -46,8 +47,7 @@ class OrderService(
         val orderItemList: List<OrderItem> =
             orderDetailsMapper.buildOrderItems(orderDto.orderItems, savedOrder.orderId)
         orderItemRepository.saveAll(orderItemList)
-        //Always return a dto - Need to map entity to dto
-        return OrderCreateResponse(savedOrder.orderId, savedOrder.orderStatus)
+        return OrderCreateResponse(savedOrder.orderId, savedOrder.toOrderDto())
 
     }
 
@@ -60,7 +60,7 @@ class OrderService(
         tax = tax,
         shippingCharges = shippingCharges,
         title = title,
-        shippingMode = shippingMode,
+        shippingMode = shippingMode.name,
         createdAt = LocalDateTime.now(),
         payment = orderDetailsMapper.buildAndLoadPayment(amount, paymentMode),
         billingAddress = orderDetailsMapper.buildAndLoadAddress(billingAddress),

@@ -4,5 +4,5 @@ import lombok.NonNull
 
 data class OrderCreateResponse(
     @NonNull val orderId: String,
-    @NonNull val orderStatus: String
+    @NonNull val orderDto: OrderDto
 )

@@ -1,5 +1,6 @@
 package com.order.ecommerce.model
 
+import com.order.ecommerce.dto.AddressDto
 import java.io.Serializable
 import java.time.LocalDate
 import javax.persistence.*
@@ -39,4 +40,16 @@ class Address(
     @OneToOne(fetch = FetchType.LAZY, mappedBy = "billingAddress")
     private var order: Order?
 
-) : Serializable
+) : Serializable {
+    companion object {
+        fun Address.toAddressDto() = AddressDto (
+            address1 = address1,
+            address2 = address2,
+            city = city,
+            state = state,
+            zip = zip,
+            email = email,
+            phone = phone
+        )
+    }
+}

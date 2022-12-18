@@ -2,6 +2,7 @@ package com.order.ecommerce.mapper
 
 import com.order.ecommerce.dto.AddressDto
 import com.order.ecommerce.dto.OrderItemDto
+import com.order.ecommerce.enum.PaymentMode
 import com.order.ecommerce.enum.PaymentStatus
 import com.order.ecommerce.model.Address
 import com.order.ecommerce.model.OrderItem
@@ -20,17 +21,31 @@ class OrderDetailsMapper(
     private val addressRepository: AddressRepository,
     private val paymentRepository: PaymentRepository
 ) {
-
-    fun buildAndLoadPayment(amount: Double, paymentMode: String): Payment {
-        val payment = Payment(
+    companion object {
+        fun getPaymentModel(amount: Double, paymentMode: PaymentMode) = Payment(
             UUID.randomUUID().toString(),
             amount,
-            paymentMode,
+            paymentMode.name,
             UUID.randomUUID().toString(),
             PaymentStatus.PROCESSING.name,
             LocalDate.now(),
             null
         )
+        fun AddressDto.toAddressEntity() = Address(
+            addressId = UUID.randomUUID().toString(),
+            address1 = address1,
+            address2 = address2,
+            city = city,
+            state = state,
+            zip = zip,
+            email = email,
+            phone = phone,
+            createdAt = LocalDate.now(),
+            order = null
+        )
+    }
+    fun buildAndLoadPayment(amount: Double, paymentMode: PaymentMode): Payment {
+        val payment = getPaymentModel(amount, paymentMode)
         paymentRepository.save(payment)
         return payment;
     }
@@ -55,19 +70,5 @@ class OrderDetailsMapper(
             .toList()
         return orderItemRepository.saveAll(orderItemList) as MutableList<OrderItem>
     }
-
-
-    private fun AddressDto.toAddressEntity() = Address(
-        addressId = UUID.randomUUID().toString(),
-        address1 = address1,
-        address2 = address2,
-        city = city,
-        state = state,
-        zip = zip,
-        email = email,
-        phone = phone,
-        createdAt = LocalDate.now(),
-        order = null
-    )
 
 }

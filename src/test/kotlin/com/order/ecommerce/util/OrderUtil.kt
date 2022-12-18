@@ -5,10 +5,10 @@ import com.order.ecommerce.dto.OrderDto
 import com.order.ecommerce.dto.OrderItemDto
 import com.order.ecommerce.enum.PaymentMode
 import com.order.ecommerce.enum.ShippingMode
-import com.order.ecommerce.model.Address
+import com.order.ecommerce.mapper.OrderDetailsMapper.Companion.getPaymentModel
+import com.order.ecommerce.mapper.OrderDetailsMapper.Companion.toAddressEntity
 import com.order.ecommerce.model.Order
 import com.order.ecommerce.model.OrderItem
-import com.order.ecommerce.model.Payment
 import java.time.LocalDateTime
 
 class OrderUtil {
@@ -24,9 +24,9 @@ class OrderUtil {
                 tax = 2.0,
                 shippingCharges = 2.0,
                 title = "test",
-                shippingMode = ShippingMode.DELIVERY.name,
+                shippingMode = ShippingMode.DELIVERY,
                 amount = 10.0,
-                paymentMode = PaymentMode.CREDIT.name,
+                paymentMode = PaymentMode.CREDIT,
                 billingAddress = createAddress(),
                 shippingAddress = createAddress(),
                 orderItems = listOf(
@@ -50,9 +50,9 @@ class OrderUtil {
         @JvmStatic
         fun createMockOrderResponse(): Order {
 
-            val payment = Payment::class.java.getConstructor().newInstance()
-            val billingAddress = Address::class.java.getConstructor().newInstance()
-            val shippingAddress = Address::class.java.getConstructor().newInstance()
+            val payment = getPaymentModel(0.0, PaymentMode.CASH)
+            val billingAddress = createAddress().toAddressEntity()
+            val shippingAddress = createAddress().toAddressEntity()
             val mutableList = mutableListOf<OrderItem>()
 
             val dateTime = LocalDateTime.parse("2022-10-17T11:31:27.771692");
@@ -65,7 +65,7 @@ class OrderUtil {
                 2.0,
                 2.0,
                 "testProduct",
-                "delivery",
+                ShippingMode.DELIVERY.name,
                 dateTime,
                 payment,
                 billingAddress,

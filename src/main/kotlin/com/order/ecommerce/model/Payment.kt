@@ -30,4 +30,7 @@ class Payment(
     @OneToOne(fetch = FetchType.LAZY, mappedBy = "payment")
     private var order: Order?
 
-) : Serializable
+) : Serializable {
+    fun getPaymentMode(): String = paymentMode
+    fun getAmount(): Double = amount
+}

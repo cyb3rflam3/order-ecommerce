@@ -2,6 +2,7 @@ package com.order.ecommerce.controller
 
 import com.order.ecommerce.dto.OrderCreateResponse
 import com.order.ecommerce.dto.OrderDto
+import com.order.ecommerce.model.Order.Companion.toOrderDto
 import com.order.ecommerce.service.OrderService
 import com.order.ecommerce.util.OrderUtil
 import org.assertj.core.api.Assertions.assertThat
@@ -23,9 +24,9 @@ class OrderControllerUnitTest {
     lateinit var orderController: OrderController
 
     private val orderDtoRequest: OrderDto = OrderUtil.createTestOrder()
+    private val mockOrderResponse = OrderUtil.createMockOrderResponse().toOrderDto()
     private val mockOrderCreateResponse: OrderCreateResponse =
-        OrderCreateResponse("2e99fe21-2243-4004-9640-e992bbcc5040", "PROCESSING")
-    private val mockOrderGetResponse = OrderUtil.createMockOrderResponse()
+        OrderCreateResponse("2e99fe21-2243-4004-9640-e992bbcc5040", mockOrderResponse)
 
 
     @Test
@@ -39,9 +40,9 @@ class OrderControllerUnitTest {
     @Test
     fun testGetOrder() {
         Mockito.`when`(orderService.findOrderById("2e99fe21-2243-4004-9640-e992bbcc5040"))
-            .thenReturn(mockOrderGetResponse)
+            .thenReturn(mockOrderResponse)
         val actualResponse = orderController.findOrderById("2e99fe21-2243-4004-9640-e992bbcc5040")
-        assertThat(actualResponse).isEqualTo(mockOrderGetResponse)
+        assertThat(actualResponse).isEqualTo(mockOrderResponse)
     }
 
 }

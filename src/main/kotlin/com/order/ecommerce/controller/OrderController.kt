@@ -18,7 +18,7 @@ class OrderController(val orderService: OrderService) {
     }
 
     @GetMapping("/orders/{orderId}")
-    fun findOrderById(@PathVariable(name = "orderId") orderId: String): Order {
+    fun findOrderById(@PathVariable(name = "orderId") orderId: String): OrderDto {
         return orderService.findOrderById(orderId)
     }
 
